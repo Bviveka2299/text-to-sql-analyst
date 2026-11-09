@@ -19,7 +19,8 @@
 - orders -> customers via customer_id
 - orders -> order_items via order_id
 - orders -> payments via order_id
-- customer_id vs customer_unique_id: TODO (write the two distinct counts and which one is the real person)
+- customer_id vs customer_unique_id: 
+customer_id is unique per order (99,441), while customer_unique_id identifies the real customer (96,096 distinct). Orders join to customers through customer_id.
 
 ## 3. Data quality issues
 - About 3% of orders (about 2,900) have more than one payment row, up to 29 rows for one order.
@@ -29,6 +30,9 @@
     - 97% of orders are delivered. 8 delivered orders have no delivery date, and 6 canceled orders do have one.
     - All orders in the other statuses (shipped, unavailable, invoiced, processing, created, approved) have a null delivery date, which is expected.
 - Product categories missing from the translation table: TODO
+- 8 orders have status delivered but no customer delivery date. 7 have a carrier date and 1 has neither. 6 of the 8 were purchased in June-July 2018, near the end of the dataset.
+- 93,099 customers (96.9%) placed one order, and 2,997 (3.1%) placed two or more. The maximum is 17 orders for one customer.
+- Two product categories are missing from the translation table: pc_gamer and portateis_cozinha_e_preparadores_de_alimentos. Some products also have a null category (count: TODO)
 
 ## 4. Implications for modeling
 - Aggregate payments to one row per order before joining, to avoid double counting.
@@ -38,3 +42,7 @@
 - Reduce reviews to one row per order (latest review) before joining, and use a left join. For ML features, only use reviews available before the prediction date.
 - Use delivered orders when defining customer purchases for the repurchase model.
 - Delivery-delay features are null for undelivered orders, so handle them explicitly.
+- Keep these orders. Leave delivery-delay features null for them. Add a dbt test with severity warn
+- Use customer_unique_id as the customer key in dim_customers. About 3,345 orders come from repeat customers (about 3%), so the repurchase label will be heavily imbalanced.
+- The repurchase label will be heavily imbalanced, and 90-day positives will be fewer still. Measure the positive rate for 90 and 180 days before choosing the target. Restrict to delivered orders. Use PR-AUC.
+- Add a dbt seed with the two missing translations, and use COALESCE(..., 'unknown') for products with no category.
