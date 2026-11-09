@@ -32,7 +32,8 @@ customer_id is unique per order (99,441), while customer_unique_id identifies th
 - Product categories missing from the translation table: TODO
 - 8 orders have status delivered but no customer delivery date. 7 have a carrier date and 1 has neither. 6 of the 8 were purchased in June-July 2018, near the end of the dataset.
 - 93,099 customers (96.9%) placed one order, and 2,997 (3.1%) placed two or more. The maximum is 17 orders for one customer.
-- Two product categories are missing from the translation table: pc_gamer and portateis_cozinha_e_preparadores_de_alimentos. Some products also have a null category (count: TODO)
+- Two product categories are missing from the translation table: pc_gamer and portateis_cozinha_e_preparadores_de_alimentos. Some products also have a null category (count: 610)
+- 610 products (1.9%) have a null category. 13 products belong to two categories missing from the translation table (pc_gamer, portateis_cozinha_e_preparadores_de_alimentos).
 
 ## 4. Implications for modeling
 - Aggregate payments to one row per order before joining, to avoid double counting.
@@ -46,3 +47,4 @@ customer_id is unique per order (99,441), while customer_unique_id identifies th
 - Use customer_unique_id as the customer key in dim_customers. About 3,345 orders come from repeat customers (about 3%), so the repurchase label will be heavily imbalanced.
 - The repurchase label will be heavily imbalanced, and 90-day positives will be fewer still. Measure the positive rate for 90 and 180 days before choosing the target. Restrict to delivered orders. Use PR-AUC.
 - Add a dbt seed with the two missing translations, and use COALESCE(..., 'unknown') for products with no category.
+- Add a dbt seed for the two missing translations. Use COALESCE(english_name, 'unknown') so null-category products are kept and labeled unknown.
