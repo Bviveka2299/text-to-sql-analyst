@@ -10,9 +10,10 @@
 - raw_order_payments: one row per payment, not per order (103,886 rows)
 - raw_order_reviews:
     - one row per review, not per order (99,224 rows). 98,126 orders have 1 review, 543 have 2, and 4 have 3
-- raw_products: TODO (32,951 rows)
-- raw_sellers: TODO (3,095 rows)
-- raw_geolocation: TODO (1,000,163 rows)
+- raw_products: one row per product, `product_id` is unique (32,951 rows). 610 products have a null category.
+- raw_sellers: one row per seller, `seller_id` is unique (3,095 rows).
+- raw_geolocation: 
+    - raw_geolocation: many points per zip prefix, not one row per prefix (1,000,163 rows, 19,015 distinct prefixes)
 - raw_product_category_name_translation: TODO (71 rows)
 
 ## 2. Keys and joins
@@ -29,7 +30,6 @@ customer_id is unique per order (99,441), while customer_unique_id identifies th
 - Delivered orders with null delivery dates: 
     - 97% of orders are delivered. 8 delivered orders have no delivery date, and 6 canceled orders do have one.
     - All orders in the other statuses (shipped, unavailable, invoiced, processing, created, approved) have a null delivery date, which is expected.
-- Product categories missing from the translation table: TODO
 - 8 orders have status delivered but no customer delivery date. 7 have a carrier date and 1 has neither. 6 of the 8 were purchased in June-July 2018, near the end of the dataset.
 - 93,099 customers (96.9%) placed one order, and 2,997 (3.1%) placed two or more. The maximum is 17 orders for one customer.
 - Two product categories are missing from the translation table: pc_gamer and portateis_cozinha_e_preparadores_de_alimentos. Some products also have a null category (count: 610)
@@ -48,3 +48,4 @@ customer_id is unique per order (99,441), while customer_unique_id identifies th
 - The repurchase label will be heavily imbalanced, and 90-day positives will be fewer still. Measure the positive rate for 90 and 180 days before choosing the target. Restrict to delivered orders. Use PR-AUC.
 - Add a dbt seed with the two missing translations, and use COALESCE(..., 'unknown') for products with no category.
 - Add a dbt seed for the two missing translations. Use COALESCE(english_name, 'unknown') so null-category products are kept and labeled unknown.
+- Aggregate geolocation to one row per zip prefix (average latitude and longitude) before joining. Use a left join, and handle customers or sellers with no match.
