@@ -1,0 +1,11 @@
+name: 'olist'
+version: '1.0.0'
+profile: 'olist'
+model-paths: ["models"]
+seed-paths: ["seeds"]
+test-paths: ["tests"]
+
+models:
+  olist:
+    staging:
+      +materialized: view
