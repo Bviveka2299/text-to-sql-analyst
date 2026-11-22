@@ -13,3 +13,6 @@ DuckDB, dbt, Pandera, Python, pytest, sqlglot
 
 ## Status
 Week 1: raw data loaded and profiled (see `docs/data-notes.md`). Next: dbt staging models.
+
+## Data lineage
+![Lineage graph](docs/lineage.png)
