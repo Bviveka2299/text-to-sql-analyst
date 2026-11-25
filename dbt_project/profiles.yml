@@ -5,3 +5,7 @@ olist:
       type: duckdb
       path: ../data/olist.duckdb
       threads: 2
+    test:
+      type: duckdb
+      path: ../data/olist_test.duckdb
+      threads: 2

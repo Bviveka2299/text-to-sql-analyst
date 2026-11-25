@@ -33,7 +33,7 @@ CHECKS = [
 ]
 
 def main():
-    con = duckdb.connect("data/olist.duckdb", read_only=True)
+    con = duckdb.connect(sys.argv[1] if len(sys.argv) > 1 else "data/olist.duckdb", read_only=True)
     failed = False
     for table, schema in CHECKS:
         df = con.sql(f"SELECT * FROM {table}").df()
