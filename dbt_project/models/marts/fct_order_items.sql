@@ -10,5 +10,5 @@ select
     i.price,
     i.freight_value
 from {{ ref('stg_order_items') }} i
-join {{ ref('stg_orders') }} o using (order_id)
+join {{ ref('stg_orders_valid') }} o using (order_id)
 join {{ ref('stg_customers') }} c using (customer_id)

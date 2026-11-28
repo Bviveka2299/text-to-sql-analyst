@@ -1,8 +1,7 @@
-
 version: 2
 
 models:
-  - name: stg_orders
+  - name: stg_orders_valid
     columns:
       - name: order_id
         data_tests: [unique, not_null]

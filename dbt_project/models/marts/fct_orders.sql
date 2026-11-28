@@ -1,5 +1,5 @@
 with orders as (
-    select * from {{ ref('stg_orders') }}
+    select * from {{ ref('stg_orders_valid') }}
 ),
 
 customers as (
@@ -23,7 +23,7 @@ payments as (
         count(*)                    as n_payments,
         sum(payment_value)          as total_payment_value,
         max(payment_installments)   as max_installments
-    from {{ ref('stg_order_payments') }}
+    from {{ ref('stg_order_payments_valid') }}
     group by 1
 ),
 
@@ -37,7 +37,7 @@ latest_review as (
                 partition by order_id
                 order by review_answered_at desc, review_created_at desc, review_id
             ) as rn
-        from {{ ref('stg_order_reviews') }}
+        from {{ ref('stg_order_reviews_valid') }}
     )
     where rn = 1
 )
