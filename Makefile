@@ -1,10 +1,7 @@
-.PHONY: setup test load dbt validate build
+.PHONY: setup load dbt validate test build
 
 setup:
 	pip install -r requirements.txt
-
-test:
-	pytest
 
 load:
 	python src/load_raw.py
@@ -14,5 +11,8 @@ dbt:
 
 validate:
 	python src/validation/validate_marts.py
+
+test:
+	pytest
 
 build: load dbt validate
